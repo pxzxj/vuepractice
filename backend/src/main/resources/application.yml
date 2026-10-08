@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: backend
+  sql:
+    init:
+      mode: always
+  jpa:
+    hibernate:
+      ddl-auto: none
