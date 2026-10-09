@@ -1,4 +1,11 @@
 backend/.idea
 backend/target
 backend/.qwen
+frontend/node_modules
+frontend/dist
+frontend/.qwen
+frontend/.vscode
 .qwen
+
+# Vite
+*.timestamp-*-*.mjs

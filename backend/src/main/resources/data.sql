@@ -1,2 +1,2 @@
-insert into sys_role(id, name, description) values(1, 'admin', 'admin');
-insert into sys_user(id, username, nickname, password, role_id) values (1, 'admin', 'admin', '$2a$10$oNGP53.cL8bWmecCj93aN.qMER/3wgcSMiUl0p8cflvL1nE/98erC', 1);
+insert into sys_role(name, description) values('admin', 'admin');
+insert into sys_user(username, nickname, password, role_id) values ('admin', 'admin', '$2a$10$oNGP53.cL8bWmecCj93aN.qMER/3wgcSMiUl0p8cflvL1nE/98erC', 1);
