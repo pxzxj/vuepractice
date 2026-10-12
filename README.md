@@ -47,6 +47,61 @@ vuepractice/
 - **用户管理**：分页列表、新增、编辑、删除；用户名重复校验；新增时密码经 BCrypt 加密。列表默认按 `id` 倒序。
 - **角色查看**：分页展示角色列表。
 
+## 前端 Vue 知识点
+
+功能虽小，但覆盖了 Vue 3 组合式 API 的常见用法。下面按知识点列出对应的代码位置。
+
+### 组件与单文件组件（SFC）
+
+- 每个 `.vue` 文件由 `<script setup>` + `<template>` + `<style scoped>` 三块组成（`App.vue`、`components/*.vue`）。
+- `<script setup>` 编译宏：顶层声明的变量 / 函数自动暴露给模板，无需 `return`。
+- `<style scoped>`：样式只作用于当前组件。
+
+### 响应式 API
+
+| 能力 | 用法 | 位置 |
+| --- | --- | --- |
+| `ref` | 定义基本类型 / 数组状态；script 内用 `.value` 读写，模板内自动解包 | `username`、`tableData`、`currentPage`、`dialogFormVisible` 等 |
+| `reactive` | 定义对象状态，属性可直接读写 | `User.vue` 的表单 `form` |
+| `computed` | 派生状态 | `stores/counter.js` 的 `doubleCount`（示例，当前未被引用） |
+| `onMounted` | 组件挂载后加载数据 | `User.vue`、`Role.vue` |
+
+### 模板语法
+
+- 插值 `{{ }}`：`{{ principalStore.principal }}`、`{{ $route.fullPath }}`。
+- 双向绑定 `v-model`：`v-model="username"`、`v-model="dialogFormVisible"`；带参数形式 `v-model:current-page`、`v-model:page-size`（分页组件）。
+- 条件渲染 `v-if` / `v-else`：`App.vue` 依据登录态切换登录页 / 主页；`LoginPage.vue` 按需显示报错信息。
+- 属性绑定 `v-bind`（`:` 简写）：`:data`、`:total`、`:prop`、`:label-width`。
+- 事件绑定 `v-on`（`@` 简写）与修饰符：`@click`、`@select`、`@size-change`、`@current-change`，以及 `@submit.prevent="login"`。
+- 插槽：作用域插槽 `<template #default="scope">` 取出 `scope.$index` / `scope.row`；具名插槽 `<template #footer>`。
+
+### 组件
+
+- 组件引入与嵌套：`App.vue` 使用 `LoginPage` / `MainPage`，`MainPage.vue` 用 `<RouterView />` 承载子页面。
+- 全局组件库：`main.js` 中 `app.use(ElementPlus)` 注册 Element Plus，模板里直接使用 `el-table`、`el-dialog`、`el-pagination` 等组件，脚本里使用 `ElMessage` / `ElMessageBox`。
+
+### 路由（Vue Router）
+
+- `createRouter` + `createWebHistory` 创建 HTML5 history 模式路由，`base` 取自 `import.meta.env.BASE_URL`。
+- 路由表：`/user` → `User.vue`，`/role` → `Role.vue`。
+- 声明式导航 `<RouterLink to="/user">`，路由出口 `<RouterView />`。
+- 模板全局属性 `$route`：`$route.fullPath` 显示当前完整路径。
+
+### 状态管理（Pinia）
+
+- Setup Store 写法：`defineStore('principal', () => { ... })`，内部用 `ref` 声明 state、用函数作为 action（`stores/principal.js`、`stores/counter.js`）。
+- 在组件之外使用：`main.js` 中先 `app.use(createPinia())`，再 `usePrincipalStore()` 并在挂载前 `await principalStore.load()` 预加载登录态。
+- store 实例是响应式的，模板中可直接读取 state 属性（无需 `.value`）：`principalStore.principal`。
+- 注意 `setup store` 与选项式 store 的区别：前者读写 state 应使用 `principal.value`，`this.principal` 是选项式 store 的写法。
+
+### Vite / 工程化
+
+- 路径别名 `@` → `src`（`vite.config.js`），组件中写作 `import { usePrincipalStore } from '@/stores/principal'`。
+- `import.meta.env.BASE_URL` 读取 Vite 注入的环境变量。
+- `main.js` 使用顶层 `await`，在挂载前完成登录态加载。
+
+> 尚未涉及、可作为后续练习：父子组件 `props` / `emit`、`watch` / `watchEffect`、`provide` / `inject`、路由懒加载与导航守卫、组件内 `computed` 的实际使用。
+
 ## 环境要求
 
 - JDK 8 及以上
